@@ -1,0 +1,26 @@
+name: "Generate help file"
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "README.md"
+      - ".github/workflows/generate-help-file.yaml"
+jobs:
+  docs:
+    runs-on: "ubuntu-latest"
+    permissions:
+      contents: "write"
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v4"
+      - name: "Convert README to help file"
+        uses: "kdheepak/panvimdoc@v4.0.1"
+        with:
+          vimdoc: "codecompanion-spinner"
+          demojify: true
+          shiftheadinglevelby: -1
+      - name: "Commit help file"
+        uses: "stefanzweifel/git-auto-commit-action@v5"
+        with:
+          commit_message: "docs: update help file"
