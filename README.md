@@ -41,3 +41,5 @@ require("codecompanion-spinner").setup()
 ## 🙏 Acknowledgements
 
 Thanks [yuhua99](https://github.com/yuhua99) for providing the [spinner logic](https://github.com/olimorris/codecompanion.nvim/discussions/640#discussioncomment-12866279).
+
+trigger
