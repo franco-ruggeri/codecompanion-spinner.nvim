@@ -1,4 +1,3 @@
-local log = require("codecompanion-spinner.log")
 local Spinner = require("codecompanion-spinner.spinner")
 
 local M = {}
@@ -10,15 +9,10 @@ M.setup = function()
 	vim.api.nvim_create_autocmd("User", {
 		pattern = "CodeCompanionChatCreated",
 		callback = function(args)
-			for _, spinner in pairs(spinners) do
-				spinner:disable()
-			end
-
 			local chat_id = args.data.id
 			assert(spinners[chat_id] == nil)
-			active_spinner = Spinner:new(args.buf)
+			active_spinner = Spinner:new(chat_id, args.buf)
 			spinners[chat_id] = active_spinner
-			log.debug("Spinner created for chat", chat_id)
 		end,
 	})
 
@@ -29,7 +23,6 @@ M.setup = function()
 			if spinners[chat_id] then
 				spinners[chat_id]:stop()
 				spinners[chat_id] = nil
-				log.debug("Spinner deleted for chat", chat_id)
 			end
 		end,
 	})
@@ -37,18 +30,25 @@ M.setup = function()
 	vim.api.nvim_create_autocmd("User", {
 		pattern = "CodeCompanionChatOpened",
 		callback = function(args)
-			-- Chats are mutually exclusively open (only one open chat at a time).
-			-- So, only the spinner for the open chat must be active.
-			for chat_id, spinner in pairs(spinners) do
-				if chat_id == args.data.id then
-					spinner:enable()
-					active_spinner = spinner
-					log.debug("Spinner enabled for chat", chat_id)
-				else
-					spinner:disable()
-					log.debug("Spinner disabled for chat", chat_id)
-				end
+			local spinner = spinners[args.data.id]
+
+			-- When a new chat is created, this event is triggered but no spinner is
+			-- available yet. After this, the CodeCompanionChatCreated event will be
+			-- triggered. The spinner is created there.
+			if not spinner then
+				return
 			end
+
+			active_spinner = spinner
+			active_spinner:enable()
+		end,
+	})
+
+	vim.api.nvim_create_autocmd("User", {
+		pattern = "CodeCompanionChatHidden",
+		callback = function(args)
+			local spinner = spinners[args.data.id]
+			spinner:disable()
 		end,
 	})
 
@@ -56,21 +56,28 @@ M.setup = function()
 		pattern = "CodeCompanionRequestStarted",
 		callback = function(args)
 			assert(active_spinner)
-			active_spinner:start()
-			log.debug("Spinner started for request", args.data.id)
+			active_spinner:start(args.data.id)
 		end,
 	})
 
 	vim.api.nvim_create_autocmd("User", {
-		pattern = { "CodeCompanionRequestFinished", "CodeCompanionChatStopped" },
+		pattern = "CodeCompanionRequestFinished",
 		callback = function(args)
-			assert(active_spinner)
-			active_spinner:stop()
-			if args.match == "CodeCompanionRequestFinished" then
-				log.debug("Spinner stopped for request", args.data.id)
-			else
-				log.debug("Spinner stopped in chat", args.data.id)
+			local request_id = args.data.id
+			for _, spinner in pairs(spinners) do
+				if spinner.request_id == request_id then
+					spinner:stop()
+					return
+				end
 			end
+			error("No spinner found for request ID: " .. request_id)
+		end,
+	})
+
+	vim.api.nvim_create_autocmd("User", {
+		pattern = "CodeCompanionChatStopped",
+		callback = function(args)
+			spinners[args.data.id]:stop()
 		end,
 	})
 end
