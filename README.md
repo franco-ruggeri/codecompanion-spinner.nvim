@@ -5,13 +5,17 @@
 Inline spinner for
 [CodeCompanion](https://github.com/codecompanion/codecompanion.nvim) in Neovim.
 
-This plugin adds an animated spinner in the chat buffer while CodeCompanion is
+This plugin adds an animated spinner in the CodeCompanion chat while AI is
 processing a request, giving clear feedback to the user.
+
+![](assets/demo.gif)
+
+Note the *"Processing..."* virtual text while AI is generating the response.
 
 ## ✨ Features
 
-- 🌀 Animated spinner in CodeCompanion chat buffers during AI processing.
-- 🗂️ Supports multiple chat buffers with concurrent active requests (each gets its
+- 🌀 Animated spinner in CodeCompanion chat during AI processing.
+- 🗂️ Supports multiple chats with concurrent active requests (each gets its
   own spinner).
 - ⚙️ Zero configuration.
 
