@@ -10,14 +10,13 @@ processing a request, giving clear feedback to the user.
 
 ![demo](assets/demo.gif)
 
-Note the *"Processing..."* virtual text while AI is generating the response.
+Note the _"Processing..."_ virtual text while AI is generating the response.
 
 ## ✨ Features
 
-- 🌀 Animated spinner in CodeCompanion chat during AI processing.
-- 🗂️ Supports multiple chats with concurrent active requests (each gets its
-  own spinner).
-- ⚙️ Zero configuration.
+own spinner).
+
+- 📊 Fidget.nvim integration for progress notifications (optional).
 
 ## 📦 Installation
 
@@ -31,8 +30,12 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim):
     dependencies = {
         "olimorris/codecompanion.nvim",
         "nvim-lua/plenary.nvim",
+        "j-hui/fidget.nvim", -- Optional: for fidget integration
     },
-    opts = {}
+     opts = {
+         log_level = "info",
+         style = "spinner", -- "spinner", "fidget", or "none"
+     }
 }
 ```
 
@@ -41,6 +44,26 @@ If you use another plugin manager, make sure to call:
 ```lua
 require("codecompanion-spinner").setup()
 ```
+
+## ⚙️ Configuration
+
+```lua
+require("codecompanion-spinner").setup({
+    -- Log level for debugging
+    log_level = "info", -- "trace", "debug", "info", "warn", "error"
+
+    -- Spinner style
+    style = "spinner", -- "spinner", "fidget", or "none"
+})
+```
+
+The plugin supports different spinner styles:
+
+- **"spinner"** (default): Custom animated spinner in chat buffers
+- **"fidget"**: Uses fidget.nvim for progress notifications (requires fidget.nvim)
+- **"none"**: Disables all spinner functionality
+
+Only one style can be active at a time.
 
 ## 🙏 Acknowledgements
 

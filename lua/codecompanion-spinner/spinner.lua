@@ -3,6 +3,16 @@ local log = require("codecompanion-spinner.log")
 local M = {}
 
 function M:new(chat_id, buffer)
+	if not chat_id or not buffer then
+		log.error("Invalid parameters for Spinner:new - chat_id and buffer are required")
+		return nil
+	end
+
+	if not vim.api.nvim_buf_is_valid(buffer) then
+		log.error("Invalid buffer provided to Spinner:new")
+		return nil
+	end
+
 	local object = {
 		chat_id = chat_id,
 		buffer = buffer,
@@ -31,16 +41,26 @@ function M:new(chat_id, buffer)
 end
 
 function M:_update_text()
+	if not self.buffer or not vim.api.nvim_buf_is_valid(self.buffer) then
+		log.warn("Invalid buffer in _update_text")
+		return
+	end
+
 	self.spinner_index = (self.spinner_index % #self.spinner_symbols) + 1
 	local last_line = vim.api.nvim_buf_line_count(self.buffer) - 1
 
 	self:_clear_text()
-	vim.api.nvim_buf_set_extmark(self.buffer, self.namespace_id, last_line, 0, {
+
+	local ok, err = pcall(vim.api.nvim_buf_set_extmark, self.buffer, self.namespace_id, last_line, 0, {
 		virt_lines = {
 			{ { "" } }, -- empty line for spacing
 			{ { self.spinner_symbols[self.spinner_index] .. " Processing...", "Comment" } },
 		},
 	})
+
+	if not ok then
+		log.warn("Failed to set extmark:", err)
+	end
 end
 
 function M:_clear_text()
@@ -50,24 +70,50 @@ function M:_clear_text()
 end
 
 function M:_start_timer()
-	assert(not self.timer)
+	if self.timer then
+		log.warn("Timer already exists, stopping previous timer")
+		self:_stop_timer()
+	end
+
 	local timer_fn = vim.schedule_wrap(function()
 		self:_update_text()
 	end)
 	self.timer = vim.uv.new_timer()
-	self.timer:start(0, 100, timer_fn)
+	if self.timer then
+		self.timer:start(0, 100, timer_fn)
+	else
+		log.error("Failed to create timer")
+		return
+	end
 	log.debug("Spinner", self.chat_id, "timer started")
 end
 
 function M:_stop_timer()
-	assert(self.timer)
-	self.timer:stop()
-	self.timer:close()
+	if not self.timer then
+		log.debug("No timer to stop")
+		return
+	end
+
+	local ok1, err1 = pcall(self.timer.stop, self.timer)
+	if not ok1 then
+		log.warn("Failed to stop timer:", err1)
+	end
+
+	local ok2, err2 = pcall(self.timer.close, self.timer)
+	if not ok2 then
+		log.warn("Failed to close timer:", err2)
+	end
+
 	self.timer = nil
 	log.debug("Spinner", self.chat_id, "timer stopped")
 end
 
 function M:start(request_id)
+	if not request_id then
+		log.warn("No request_id provided to start")
+		return
+	end
+
 	self.request_id = request_id
 	self.spinner_index = 0
 	self:_start_timer()
@@ -77,7 +123,9 @@ end
 function M:stop()
 	if self.chat_in_buffer then
 		self:_clear_text()
-		self:_stop_timer()
+		if self.timer then
+			self:_stop_timer()
+		end
 	end
 	self.request_id = nil
 	log.debug("Spinner", self.chat_id, "stopped")

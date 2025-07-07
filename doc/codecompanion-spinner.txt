@@ -6,8 +6,10 @@ Table of Contents                    *codecompanion-spinner-table-of-contents*
 1. Overview                                   |codecompanion-spinner-overview|
 2. Features                                   |codecompanion-spinner-features|
 3. Installation                           |codecompanion-spinner-installation|
-4. Acknowledgements                   |codecompanion-spinner-acknowledgements|
-5. Links                                         |codecompanion-spinner-links|
+4. Configuration                         |codecompanion-spinner-configuration|
+5. Examples                                   |codecompanion-spinner-examples|
+6. Acknowledgements                   |codecompanion-spinner-acknowledgements|
+7. Links                                         |codecompanion-spinner-links|
 
 ==============================================================================
 1. Overview                                   *codecompanion-spinner-overview*
@@ -18,18 +20,19 @@ Inline spinner for CodeCompanion
 This plugin adds an animated spinner in the CodeCompanion chat while AI is
 processing a request, giving clear feedback to the user.
 
-Note the _“Processing…”_ virtual text while AI is generating the
-response.
-
+Note the _"Processing..."_ virtual text while AI is generating the response.
 
 ==============================================================================
 2. Features                                   *codecompanion-spinner-features*
 
-- Animated spinner in CodeCompanion chat during AI processing.
+- Animated spinner in CodeCompanion chat during AI processing
 - Supports multiple chats with concurrent active requests (each gets its
-    own spinner).
-- Zero configuration.
-
+  own spinner)
+- Fidget.nvim integration for progress notifications (optional)
+- Multiple spinner styles: "spinner", "fidget", or "none"
+- Configurable log levels for debugging
+- Zero configuration by default
+- Runtime style switching support
 
 ==============================================================================
 3. Installation                           *codecompanion-spinner-installation*
@@ -39,33 +42,135 @@ Using lazy.nvim <https://github.com/folke/lazy.nvim>
 >lua
     {
         "franco-ruggeri/codecompanion-spinner.nvim",
-        dev = true,
-        lazy = true,
         dependencies = {
             "olimorris/codecompanion.nvim",
             "nvim-lua/plenary.nvim",
+            "j-hui/fidget.nvim", -- Optional: for fidget integration
         },
-        opts = {}
+        opts = {
+            log_level = "info",
+            style = "spinner", -- "spinner", "fidget", or "none"
+        }
     }
 <
 
-Ifyou use another plugin manager, make sure to call:
+If you use another plugin manager, make sure to call:
 
 >lua
     require("codecompanion-spinner").setup()
 <
 
+==============================================================================
+4. Configuration                         *codecompanion-spinner-configuration*
+
+Configure the plugin using the `setup()` function:
+
+>lua
+    require("codecompanion-spinner").setup({
+        -- Log level for debugging
+        log_level = "info", -- "trace", "debug", "info", "warn", "error"
+        
+        -- Spinner style
+        style = "spinner", -- "spinner", "fidget", or "none"
+    })
+<
+
+*codecompanion-spinner-log-level*
+The `log_level` option controls logging verbosity:
+- `"trace"`: Most verbose, shows all debug information
+- `"debug"`: Debug information for troubleshooting
+- `"info"`: General information messages (default)
+- `"warn"`: Warning messages only
+- `"error"`: Error messages only
+
+*codecompanion-spinner-style*
+The `style` option controls which spinner style to use:
+- `"spinner"` (default): Custom animated spinner in chat buffers
+- `"fidget"`: Uses fidget.nvim for progress notifications
+- `"none"`: Disables all spinner functionality
+
+*codecompanion-spinner-style-comparison*
+Spinner Style ("spinner"):
+- ✅ No external dependencies
+- ✅ Integrated directly into chat buffers
+- ✅ Consistent with CodeCompanion UI
+- ❌ Only visible in chat buffers
+
+Fidget Style ("fidget"):
+- ✅ System-wide progress notifications
+- ✅ Consistent with other LSP progress indicators
+- ✅ Shows detailed adapter/model information
+- ❌ Requires fidget.nvim dependency
+
+None Style ("none"):
+- ✅ No visual distractions
+- ✅ Minimal resource usage
+- ❌ No visual feedback for request progress
 
 ==============================================================================
-4. Acknowledgements                   *codecompanion-spinner-acknowledgements*
+5. Examples                                   *codecompanion-spinner-examples*
+
+*codecompanion-spinner-example-default*
+Default configuration:
+>lua
+    require("codecompanion-spinner").setup()
+<
+
+*codecompanion-spinner-example-fidget*
+Fidget integration:
+>lua
+    require("codecompanion-spinner").setup({
+        style = "fidget",
+        log_level = "info",
+    })
+<
+
+*codecompanion-spinner-example-disabled*
+Disabled spinner:
+>lua
+    require("codecompanion-spinner").setup({
+        style = "none",
+        log_level = "warn",
+    })
+<
+
+*codecompanion-spinner-example-dynamic*
+Dynamic configuration based on available plugins:
+>lua
+    local has_fidget = pcall(require, "fidget")
+    require("codecompanion-spinner").setup({
+        style = has_fidget and "fidget" or "spinner",
+        log_level = "info",
+    })
+<
+
+*codecompanion-spinner-runtime-switching*
+Runtime style switching:
+>lua
+    -- Switch to fidget style
+    require("codecompanion-spinner").setup({ style = "fidget" })
+    
+    -- Switch to spinner style
+    require("codecompanion-spinner").setup({ style = "spinner" })
+    
+    -- Disable spinner
+    require("codecompanion-spinner").setup({ style = "none" })
+<
+
+==============================================================================
+6. Acknowledgements                   *codecompanion-spinner-acknowledgements*
 
 Thanks yuhua99 <https://github.com/yuhua99> for providing the spinner logic
 <https://github.com/olimorris/codecompanion.nvim/discussions/640#discussioncomment-12866279>.
 
 ==============================================================================
-5. Links                                         *codecompanion-spinner-links*
+7. Links                                         *codecompanion-spinner-links*
 
 1. *demo*: assets/demo.gif
+2. *configuration guide*: docs/configuration.md
+3. *examples*: examples/
+4. *lazy config*: examples/lazy-config.lua
+5. *different configs*: examples/different-configs.lua
 
 Generated by panvimdoc <https://github.com/kdheepak/panvimdoc>
 
