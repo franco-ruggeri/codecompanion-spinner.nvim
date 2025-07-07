@@ -44,7 +44,9 @@ function M:_update_text()
 end
 
 function M:_clear_text()
-	vim.api.nvim_buf_clear_namespace(self.buffer, self.namespace_id, 0, -1)
+	if vim.api.nvim_buf_is_valid(self.buffer) then -- if not closed already
+		vim.api.nvim_buf_clear_namespace(self.buffer, self.namespace_id, 0, -1)
+	end
 end
 
 function M:_start_timer()
@@ -73,7 +75,6 @@ function M:start(request_id)
 end
 
 function M:stop()
-	log.debug("in stop of spinner", self.chat_id, "... chat_in_buffer:", self.chat_in_buffer)
 	if self.chat_in_buffer then
 		self:_clear_text()
 		self:_stop_timer()
