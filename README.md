@@ -26,8 +26,6 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim):
 ```lua
 {
     "franco-ruggeri/codecompanion-spinner.nvim",
-    dev = true,
-    lazy = true,
     dependencies = {
         "olimorris/codecompanion.nvim",
         "nvim-lua/plenary.nvim",
@@ -44,4 +42,5 @@ require("codecompanion-spinner").setup()
 
 ## 🙏 Acknowledgements
 
-Thanks [yuhua99](https://github.com/yuhua99) for providing the [spinner logic](https://github.com/olimorris/codecompanion.nvim/discussions/640#discussioncomment-12866279).
+Thanks [yuhua99](https://github.com/yuhua99) for providing the basic [spinner
+logic](https://github.com/olimorris/codecompanion.nvim/discussions/640#discussioncomment-12866279).
