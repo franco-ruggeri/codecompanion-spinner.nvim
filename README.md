@@ -8,7 +8,7 @@ Inline spinner for
 This plugin adds an animated spinner in the CodeCompanion chat while AI is
 processing a request, giving clear feedback to the user.
 
-![](assets/demo.gif)
+![demo](assets/demo.gif)
 
 Note the *"Processing..."* virtual text while AI is generating the response.
 
