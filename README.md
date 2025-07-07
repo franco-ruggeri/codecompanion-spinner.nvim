@@ -3,7 +3,7 @@
 ## 📖 Overview
 
 Inline spinner for
-[CodeCompanion](https://github.com/codecompanion/codecompanion.nvim) in Neovim.
+[CodeCompanion](https://github.com/olimorris/codecompanion.nvim) in Neovim.
 
 This plugin adds an animated spinner in the CodeCompanion chat while AI is
 processing a request, giving clear feedback to the user.
