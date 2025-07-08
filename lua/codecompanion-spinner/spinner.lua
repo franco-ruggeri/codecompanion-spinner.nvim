@@ -94,12 +94,22 @@ function M:_stop_timer()
 		return
 	end
 
-	local ok1, err1 = pcall(self.timer.stop, self.timer)
+	-- Check if timer is still valid before stopping
+	local ok1, err1 = pcall(function() 
+		if self.timer and self.timer:is_active() then
+			self.timer:stop() 
+		end
+	end)
 	if not ok1 then
 		log.warn("Failed to stop timer:", err1)
 	end
 
-	local ok2, err2 = pcall(self.timer.close, self.timer)
+	-- Check if timer is still valid before closing
+	local ok2, err2 = pcall(function() 
+		if self.timer and not self.timer:is_closing() then
+			self.timer:close() 
+		end
+	end)
 	if not ok2 then
 		log.warn("Failed to close timer:", err2)
 	end
@@ -123,9 +133,10 @@ end
 function M:stop()
 	if self.chat_in_buffer then
 		self:_clear_text()
-		if self.timer then
-			self:_stop_timer()
-		end
+	end
+	-- Always attempt to stop timer if it exists, regardless of chat_in_buffer state
+	if self.timer then
+		self:_stop_timer()
 	end
 	self.request_id = nil
 	log.debug("Spinner", self.chat_id, "stopped")
@@ -144,7 +155,8 @@ end
 
 function M:disable()
 	self.chat_in_buffer = false
-	if self.request_id then
+	-- Stop timer if it's running, regardless of request_id state
+	if self.timer then
 		self:_stop_timer()
 	end
 	log.debug("Spinner", self.chat_id, "disabled")

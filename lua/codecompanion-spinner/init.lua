@@ -56,4 +56,23 @@ function M.setup(opts)
 	end
 end
 
+-- Cleanup function to safely stop all spinners
+function M.cleanup()
+	-- Cleanup spinner manager if it was initialized
+	if M.spinner_manager and type(M.spinner_manager.cleanup) == "function" then
+		local ok, err = pcall(M.spinner_manager.cleanup)
+		if not ok then
+			M.log.error("Failed to cleanup spinner manager:", err)
+		end
+	end
+	
+	-- Cleanup fidget spinner if it was initialized
+	if M.fidget_spinner and type(M.fidget_spinner.cleanup) == "function" then
+		local ok, err = pcall(M.fidget_spinner.cleanup)
+		if not ok then
+			M.log.error("Failed to cleanup fidget spinner:", err)
+		end
+	end
+end
+
 return M

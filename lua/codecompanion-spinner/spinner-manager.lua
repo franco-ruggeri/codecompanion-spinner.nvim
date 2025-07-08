@@ -132,4 +132,19 @@ M.setup = function()
 	})
 end
 
+-- Cleanup function to safely stop all spinners
+M.cleanup = function()
+	for chat_id, spinner in pairs(spinners) do
+		if spinner then
+			local ok, err = pcall(spinner.stop, spinner)
+			if not ok then
+				log.error("Failed to stop spinner for chat", chat_id, ":", err)
+			end
+		end
+	end
+	spinners = {}
+	active_spinner = nil
+	log.debug("Spinner manager cleaned up")
+end
+
 return M
