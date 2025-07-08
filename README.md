@@ -8,7 +8,7 @@ Inline spinner for
 This plugin adds an animated spinner in the CodeCompanion chat while AI is
 processing a request, giving clear feedback to the user.
 
-![demo](assets/demo.gif)
+![demo-spinner](https://github.com/user-attachments/assets/66191a4e-8bab-4c37-88f6-f208c9f387ea)
 
 Note the _"Processing..."_ virtual text while AI is generating the response.
 
@@ -25,8 +25,6 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim):
 ```lua
 {
     "franco-ruggeri/codecompanion-spinner.nvim",
-    dev = true,
-    lazy = true,
     dependencies = {
         "olimorris/codecompanion.nvim",
         "nvim-lua/plenary.nvim",
@@ -67,4 +65,5 @@ Only one style can be active at a time.
 
 ## 🙏 Acknowledgements
 
-Thanks [yuhua99](https://github.com/yuhua99) for providing the [spinner logic](https://github.com/olimorris/codecompanion.nvim/discussions/640#discussioncomment-12866279).
+Thanks [yuhua99](https://github.com/yuhua99) for providing the basic [spinner
+logic](https://github.com/olimorris/codecompanion.nvim/discussions/640#discussioncomment-12866279).

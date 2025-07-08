@@ -160,13 +160,14 @@ Runtime style switching:
 ==============================================================================
 6. Acknowledgements                   *codecompanion-spinner-acknowledgements*
 
-Thanks yuhua99 <https://github.com/yuhua99> for providing the spinner logic
+Thanks yuhua99 <https://github.com/yuhua99> for providing the basic spinner
+logic
 <https://github.com/olimorris/codecompanion.nvim/discussions/640#discussioncomment-12866279>.
 
 ==============================================================================
 7. Links                                         *codecompanion-spinner-links*
 
-1. *demo*: assets/demo.gif
+1. *demo-spinner*: https://github.com/user-attachments/assets/66191a4e-8bab-4c37-88f6-f208c9f387ea
 2. *configuration guide*: docs/configuration.md
 3. *examples*: examples/
 4. *lazy config*: examples/lazy-config.lua
