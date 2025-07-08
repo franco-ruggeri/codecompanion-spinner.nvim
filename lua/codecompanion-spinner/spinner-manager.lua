@@ -62,8 +62,11 @@ M.setup = function()
 		pattern = "CodeCompanionRequestStarted",
 		callback = function(args)
 			log.debug("CodeCompanionRequestStarted")
-			assert(active_spinner)
-			active_spinner:start(args.data.id)
+			-- The request might be inline, without an active chat.
+			-- In that case, we don't have an active spinner.
+			if active_spinner then
+				active_spinner:start(args.data.id)
+			end
 		end,
 	})
 
@@ -73,8 +76,9 @@ M.setup = function()
 			log.debug("CodeCompanionRequestFinished")
 
 			-- Search for the spinner is handling the request.
-			-- Note: If the chat was stopped, the spinner was deleted.
-			-- In that case, no spinner will be found.
+			-- Note: The spinner will not found in some cases:
+			-- * When the chat was stopped, the spinner was deleted.
+			-- * When the request was inline.
 			local request_id = args.data.id
 			for _, spinner in pairs(spinners) do
 				if spinner.request_id == request_id then
