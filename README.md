@@ -25,19 +25,17 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim):
 
 ```lua
 {
-    "franco-ruggeri/codecompanion-spinner.nvim",
+    "olimorris/codecompanion.nvim",
     dependencies = {
-        "olimorris/codecompanion.nvim",
-        "nvim-lua/plenary.nvim",
+        { "nvim-lua/plenary.nvim", version = false },
+        "franco-ruggeri/codecompanion-spinner.nvim",
     },
-    opts = {}
+    opts = {
+        extensions = {
+            spinner = {},
+        },
+    },
 }
-```
-
-If you use another plugin manager, make sure to call:
-
-```lua
-require("codecompanion-spinner").setup()
 ```
 
 ## 🙏 Acknowledgements
