@@ -75,7 +75,7 @@ function M:start(request_id)
 end
 
 function M:stop()
-	if self.chat_in_buffer then
+	if self.chat_in_buffer and self.request_id then
 		self:_clear_text()
 		self:_stop_timer()
 	end
