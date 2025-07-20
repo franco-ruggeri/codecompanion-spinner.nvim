@@ -54,7 +54,9 @@ M.setup = function()
 		callback = function(args)
 			log.debug("CodeCompanionChatHidden")
 			local spinner = spinners[args.data.id]
-			spinner:disable()
+			if spinner then
+				spinner:disable()
+			end
 		end,
 	})
 
