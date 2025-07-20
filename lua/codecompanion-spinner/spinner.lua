@@ -11,18 +11,7 @@ function M:new(chat_id, buffer)
 		timer = nil,
 		namespace_id = vim.api.nvim_create_namespace("CodeCompanionSpinner"),
 		spinner_index = nil,
-		spinner_symbols = {
-			"⠋",
-			"⠙",
-			"⠹",
-			"⠸",
-			"⠼",
-			"⠴",
-			"⠦",
-			"⠧",
-			"⠇",
-			"⠏",
-		},
+		spinner_symbols = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" },
 	}
 	self.__index = self
 	setmetatable(object, self)

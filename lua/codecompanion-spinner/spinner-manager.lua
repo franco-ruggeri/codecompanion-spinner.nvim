@@ -35,17 +35,15 @@ M.setup = function()
 		callback = function(args)
 			log.debug("CodeCompanionChatOpened")
 
-			local spinner = spinners[args.data.id]
-
 			-- When a new chat is created, this event is triggered but no spinner is
 			-- available yet. After this, the CodeCompanionChatCreated event will be
-			-- triggered. The spinner is created there.
-			if not spinner then
-				return
+			-- triggered, which creates the spinner. Here, we need to check if the
+			-- spinner exists.
+			local spinner = spinners[args.data.id]
+			if spinner then
+				active_spinner = spinner
+				active_spinner:enable()
 			end
-
-			active_spinner = spinner
-			active_spinner:enable()
 		end,
 	})
 
