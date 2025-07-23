@@ -6,8 +6,8 @@ function M:new(chat_id, buffer)
 	local object = {
 		chat_id = chat_id,
 		buffer = buffer,
-		request_id = nil, -- ongoing request in this chat
-		chat_in_buffer = true, -- buffer is displaying this chat
+		started = false, -- whether there is an active request in the chat
+		enabled = false, -- whether the chat buffer is displaying this chat
 		timer = nil,
 		namespace_id = vim.api.nvim_create_namespace("CodeCompanionSpinner"),
 		spinner_index = nil,
@@ -39,7 +39,11 @@ function M:_clear_text()
 end
 
 function M:_start_timer()
-	assert(not self.timer)
+	if self.timer then
+		log.debug("Spinner", self.chat_id, "timer already started")
+		return
+	end
+
 	local timer_fn = vim.schedule_wrap(function()
 		self:_update_text()
 	end)
@@ -49,45 +53,69 @@ function M:_start_timer()
 end
 
 function M:_stop_timer()
-	assert(self.timer)
+	if not self.timer then
+		log.debug("Spinner", self.chat_id, "timer already stopped")
+		return
+	end
+
 	self.timer:stop()
 	self.timer:close()
 	self.timer = nil
 	log.debug("Spinner", self.chat_id, "timer stopped")
 end
 
-function M:start(request_id)
-	self.request_id = request_id
+function M:start()
+	if self.started then
+		log.debug("Spinner", self.chat_id, "already started")
+		return
+	end
+
 	self.spinner_index = 0
 	self:_start_timer()
+	self.started = true
 	log.debug("Spinner", self.chat_id, "started")
 end
 
 function M:stop()
-	if self.chat_in_buffer and self.request_id then
-		self:_clear_text()
-		self:_stop_timer()
+	if not self.started then
+		log.debug("Spinner", self.chat_id, "already stopped")
+		return
 	end
-	self.request_id = nil
+
+	if self.enabled then
+		self:_stop_timer()
+		self:_clear_text()
+	end
+	self.started = false
 	log.debug("Spinner", self.chat_id, "stopped")
 end
 
 function M:enable()
-	self.chat_in_buffer = true
-	if self.request_id then
+	if self.enabled then
+		log.debug("Spinner", self.chat_id, "already enabled")
+		return
+	end
+
+	if self.started then
 		self:_start_timer()
 	else
-		-- If a request finished while the chat was hidden, there is leftover text
+		-- If the request finished while the chat was hidden, there is leftover text
 		self:_clear_text()
 	end
+	self.enabled = true
 	log.debug("Spinner", self.chat_id, "enabled")
 end
 
 function M:disable()
-	self.chat_in_buffer = false
-	if self.request_id then
+	if not self.enabled then
+		log.debug("Spinner", self.chat_id, "already disabled")
+		return
+	end
+
+	if self.started then
 		self:_stop_timer()
 	end
+	self.enabled = false
 	log.debug("Spinner", self.chat_id, "disabled")
 end
 
