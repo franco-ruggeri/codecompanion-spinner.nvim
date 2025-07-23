@@ -7,10 +7,10 @@ function M:new(chat_id, buffer)
 		chat_id = chat_id,
 		buffer = buffer,
 		started = false, -- whether there is an active request in the chat
-		enabled = false, -- whether the chat buffer is displaying this chat
+		enabled = false, -- whether the chat buffer is displaying the chat
 		timer = nil,
 		namespace_id = vim.api.nvim_create_namespace("CodeCompanionSpinner"),
-		spinner_index = nil,
+		spinner_index = 0,
 		spinner_symbols = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" },
 	}
 	self.__index = self
@@ -40,10 +40,8 @@ end
 
 function M:_start_timer()
 	if self.timer then
-		log.debug("Spinner", self.chat_id, "timer already started")
 		return
 	end
-
 	local timer_fn = vim.schedule_wrap(function()
 		self:_update_text()
 	end)
@@ -54,69 +52,64 @@ end
 
 function M:_stop_timer()
 	if not self.timer then
-		log.debug("Spinner", self.chat_id, "timer already stopped")
 		return
 	end
-
 	self.timer:stop()
 	self.timer:close()
 	self.timer = nil
 	log.debug("Spinner", self.chat_id, "timer stopped")
 end
 
-function M:start()
-	if self.started then
-		log.debug("Spinner", self.chat_id, "already started")
-		return
+function M:_update_state()
+	-- The spinner can have 4 states
+
+	-- 1. <enabled=true, started=true>
+	--  The chat controlled by the spinner is displayed in the chat buffer and has an active request.
+	--  In this state, the spinner should run and print the virtual text.
+	if self.enabled and self.started then
+		self:_start_timer()
+
+	-- 2. <enabled=true, started=false>:
+	--  The chat controlled by the spinner is displayed in the chat buffer, but there is no active request.
+	--  In this state, the spinner should ensure that no virtual text is shown.
+	elseif self.enabled and not self.started then
+		self:_stop_timer()
+		self:_clear_text()
+
+	-- 3/4. <enabled=false, *>
+	--  The chat controlled by the spinner is not displayed in the chat buffer.
+	--  In these states, the spinner should not touch the chat buffer, which is controlled by another spinner.
+	else
+		self:_stop_timer()
 	end
 
-	self.spinner_index = 0
-	self:_start_timer()
+	log.debug(
+		"Spinner",
+		self.chat_id,
+		"state updated:",
+		"enabled=" .. tostring(self.enabled),
+		"started=" .. tostring(self.started)
+	)
+end
+
+function M:start()
 	self.started = true
-	log.debug("Spinner", self.chat_id, "started")
+	self:_update_state()
 end
 
 function M:stop()
-	if not self.started then
-		log.debug("Spinner", self.chat_id, "already stopped")
-		return
-	end
-
-	if self.enabled then
-		self:_stop_timer()
-		self:_clear_text()
-	end
 	self.started = false
-	log.debug("Spinner", self.chat_id, "stopped")
+	self:_update_state()
 end
 
 function M:enable()
-	if self.enabled then
-		log.debug("Spinner", self.chat_id, "already enabled")
-		return
-	end
-
-	if self.started then
-		self:_start_timer()
-	else
-		-- If the request finished while the chat was hidden, there is leftover text
-		self:_clear_text()
-	end
 	self.enabled = true
-	log.debug("Spinner", self.chat_id, "enabled")
+	self:_update_state()
 end
 
 function M:disable()
-	if not self.enabled then
-		log.debug("Spinner", self.chat_id, "already disabled")
-		return
-	end
-
-	if self.started then
-		self:_stop_timer()
-	end
 	self.enabled = false
-	log.debug("Spinner", self.chat_id, "disabled")
+	self:_update_state()
 end
 
 return M
