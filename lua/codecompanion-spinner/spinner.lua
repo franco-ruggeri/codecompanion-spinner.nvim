@@ -20,6 +20,11 @@ function M:new(chat_id, buffer)
 end
 
 function M:_update_text()
+  -- There might have been a state change right before this call was scheduled by the timer
+  if not (self.enabled and self.started) then
+    return
+  end
+
 	self.spinner_index = (self.spinner_index % #self.spinner_symbols) + 1
 	local last_line = vim.api.nvim_buf_line_count(self.buffer) - 1
 
