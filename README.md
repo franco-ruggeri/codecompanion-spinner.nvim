@@ -21,7 +21,19 @@ Note the *"Processing..."* virtual text while AI is generating the response.
 
 ## 📦 Installation
 
-Using [lazy.nvim](https://github.com/folke/lazy.nvim):
+Add the inline spinner to your CodeCompanion setup as follows:
+
+```lua
+require("codecompanion").setup({
+    -- ... other codecompanion setup ...
+    extensions = {
+        spinner = {},
+    },
+})
+```
+
+<details>
+<summary>Example using <a href="https://github.com/folke/lazy.nvim">lazy.nvim</a>:</summary>
 
 ```lua
 {
@@ -31,12 +43,15 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim):
         "franco-ruggeri/codecompanion-spinner.nvim",
     },
     opts = {
+        -- ... other codecompanion setup ...
         extensions = {
             spinner = {},
         },
     },
 }
 ```
+
+</details>
 
 ## 🙏 Acknowledgements
 
