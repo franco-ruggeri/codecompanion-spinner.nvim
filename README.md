@@ -1,5 +1,7 @@
 # 🌀 CodeCompanion Spinner
 
+> ⚠️ **Note**: This plugin no longer requires `plenary.nvim` dependency due to Neovim 0.10+ built-in logging support.
+
 ## 📖 Overview
 
 Inline spinner for
@@ -8,7 +10,7 @@ Inline spinner for
 This plugin adds an animated spinner in the CodeCompanion chat while AI is
 processing a request, giving clear feedback to the user.
 
-![demo-spinner](https://github.com/user-attachments/assets/66191a4e-8bab-4c37-88f6-f208c9f387ea)
+![demo-spinner](https://github.com/user-attachments/assets/66191a4e-8bab-8869-a67e-b115-d28e3084c473)
 
 Note the *"Processing..."* virtual text while AI is generating the response.
 
@@ -18,6 +20,7 @@ Note the *"Processing..."* virtual text while AI is generating the response.
 - 🗂️ Supports multiple chats with concurrent active requests (each gets its
   own spinner).
 - ⚙️ Zero configuration.
+- 🚫 **No `plenary.nvim` dependency required** (uses Neovim built-in logging).
 
 ## 📦 Installation
 
@@ -39,8 +42,8 @@ require("codecompanion").setup({
 {
     "olimorris/codecompanion.nvim",
     dependencies = {
-        { "nvim-lua/plenary.nvim", version = false },
         "franco-ruggeri/codecompanion-spinner.nvim",
+        -- plenary.nvim is no longer required
     },
     opts = {
         -- ... other codecompanion setup ...
@@ -53,7 +56,19 @@ require("codecompanion").setup({
 
 </details>
 
+## 🧪 Compatibility
+
+- ✅ **Neovim 0.10+**: Uses built-in `vim.log` API
+- ⚠️ **Neovim <0.10**: May require `plenary.nvim` fallback (deprecated)
+
 ## 🙏 Acknowledgements
 
 Thanks [yuhua99](https://github.com/yuhua99) for providing the basic [spinner
 logic](https://github.com/olimorris/codecompanion.nvim/discussions/640#discussioncomment-12866279).
+
+---
+
+## 🔄 Migration Note
+
+This plugin has been updated to no longer depend on `plenary.nvim`, which is being archived.
+If you're upgrading from an older version, you can remove `plenary.nvim` from your dependencies.
