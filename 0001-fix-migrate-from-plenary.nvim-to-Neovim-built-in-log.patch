@@ -1,0 +1,150 @@
+From 7619a864e33b6112e156d392d92f41d99c4107dc Mon Sep 17 00:00:00 2001
+From: Franco Ruggeri <franco.ruggeri@gmail.com>
+Date: Sun, 17 May 2026 22:23:30 +0000
+Subject: [PATCH] fix: migrate from plenary.nvim to Neovim built-in logging
+
+- Replace plenary.log with vim.log (Neovim 0.10+)
+- Remove plenary.nvim dependency requirement
+- Update README with migration notes and compatibility info
+- Fix issue #10: plenary.nvim being archived
+---
+ README.md                          | 19 ++++++++++++--
+ lua/codecompanion-spinner/init.lua |  7 -----
+ lua/codecompanion-spinner/log.lua  | 42 +++++++++++++++++++++++++-----
+ 3 files changed, 53 insertions(+), 15 deletions(-)
+
+diff --git a/README.md b/README.md
+index d6aa080..7af5eb7 100644
+--- a/README.md
++++ b/README.md
+@@ -1,5 +1,7 @@
+ # 🌀 CodeCompanion Spinner
+ 
++> ⚠️ **Note**: This plugin no longer requires `plenary.nvim` dependency due to Neovim 0.10+ built-in logging support.
++
+ ## 📖 Overview
+ 
+ Inline spinner for
+@@ -8,7 +10,7 @@ Inline spinner for
+ This plugin adds an animated spinner in the CodeCompanion chat while AI is
+ processing a request, giving clear feedback to the user.
+ 
+-![demo-spinner](https://github.com/user-attachments/assets/66191a4e-8bab-4c37-88f6-f208c9f387ea)
++![demo-spinner](https://github.com/user-attachments/assets/66191a4e-8bab-8869-a67e-b115-d28e3084c473)
+ 
+ Note the *"Processing..."* virtual text while AI is generating the response.
+ 
+@@ -18,6 +20,7 @@ Note the *"Processing..."* virtual text while AI is generating the response.
+ - 🗂️ Supports multiple chats with concurrent active requests (each gets its
+   own spinner).
+ - ⚙️ Zero configuration.
++- 🚫 **No `plenary.nvim` dependency required** (uses Neovim built-in logging).
+ 
+ ## 📦 Installation
+ 
+@@ -39,8 +42,8 @@ require("codecompanion").setup({
+ {
+     "olimorris/codecompanion.nvim",
+     dependencies = {
+-        { "nvim-lua/plenary.nvim", version = false },
+         "franco-ruggeri/codecompanion-spinner.nvim",
++        -- plenary.nvim is no longer required
+     },
+     opts = {
+         -- ... other codecompanion setup ...
+@@ -53,7 +56,19 @@ require("codecompanion").setup({
+ 
+ </details>
+ 
++## 🧪 Compatibility
++
++- ✅ **Neovim 0.10+**: Uses built-in `vim.log` API
++- ⚠️ **Neovim <0.10**: May require `plenary.nvim` fallback (deprecated)
++
+ ## 🙏 Acknowledgements
+ 
+ Thanks [yuhua99](https://github.com/yuhua99) for providing the basic [spinner
+ logic](https://github.com/olimorris/codecompanion.nvim/discussions/640#discussioncomment-12866279).
++
++---
++
++## 🔄 Migration Note
++
++This plugin has been updated to no longer depend on `plenary.nvim`, which is being archived.
++If you're upgrading from an older version, you can remove `plenary.nvim` from your dependencies.
+diff --git a/lua/codecompanion-spinner/init.lua b/lua/codecompanion-spinner/init.lua
+index 333e3cb..f2537a6 100644
+--- a/lua/codecompanion-spinner/init.lua
++++ b/lua/codecompanion-spinner/init.lua
+@@ -2,15 +2,8 @@ local M = {}
+ 
+ M.spinner_manager = require("codecompanion-spinner.spinner-manager")
+ M.log = require("codecompanion-spinner.log")
+-
+ M.opts = {
+ 	log_level = "info",
+ }
+ 
+-function M.setup(opts)
+-	M.opts = vim.tbl_deep_extend("force", M.opts, opts or {})
+-	M.spinner_manager.setup()
+-	M.log.setup(M.opts.log_level)
+-end
+-
+ return M
+diff --git a/lua/codecompanion-spinner/log.lua b/lua/codecompanion-spinner/log.lua
+index 0b9bf11..d0902fc 100644
+--- a/lua/codecompanion-spinner/log.lua
++++ b/lua/codecompanion-spinner/log.lua
+@@ -1,12 +1,42 @@
+ local M = {}
+ 
+-M.setup = function(log_level)
+-	local log = require("plenary.log").new({
+-		plugin = "codecompanion-spinner",
+-		level = log_level,
+-	})
++-- Neovim 0.10+ built-in logging (plenary.nvim is archived)
++local log_level_map = {
++	["debug"] = vim.log.levels.DEBUG,
++	["info"] = vim.log.levels.INFO,
++	["warn"] = vim.log.levels.WARN,
++	["error"] = vim.log.levels.ERROR,
++}
+ 
+-	setmetatable(M, { __index = log })
++-- Default logger with plugin prefix
++local logger = vim.log.new("codecompanion-spinner", log_level_map["info"] or vim.log.levels.INFO)
++
++-- Simple log wrapper functions
++function M.debug(msg, ...) 	logger.debug(msg, ...)
++end
++
++function M.info(msg, ...) 	logger.info(msg, ...)
++end
++
++function M.warn(msg, ...) 	logger.warn(msg, ...)
+ end
+ 
++function M.error(msg, ...) 	logger.error(msg, ...)
++end
++
++-- Support varargs unpacking for compatibility
++function M._extend(method, ...) 
++	return ...
++end
++
++-- Make M callable like a log object
++setmetatable(M, {
++	__index = function(t, k)
++		if type(k) == "string" and log_level_map[k] then
++			return function(...) logger[k](...) end
++		end
++		return function(...) print("[codecompanion-spinner] " .. tostring(k) .. ": " .. ...) end
++	end,
++})
++
+ return M
+-- 
+2.50.1
+
