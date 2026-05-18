@@ -1,4 +1,4 @@
-*codecompanion-spinner.txt*    For NVIM v0.8.0    Last change: 2026 January 20
+*codecompanion-spinner.txt*      For NVIM v0.8.0      Last change: 2026 May 18
 
 ==============================================================================
 Table of Contents                    *codecompanion-spinner-table-of-contents*
@@ -51,7 +51,6 @@ Example using lazy.nvim ~
     {
         "olimorris/codecompanion.nvim",
         dependencies = {
-            { "nvim-lua/plenary.nvim", version = false },
             "franco-ruggeri/codecompanion-spinner.nvim",
         },
         opts = {
