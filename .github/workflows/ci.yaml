@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -20,7 +21,10 @@ jobs:
           vimdoc: codecompanion-spinner
           demojify: true
           shiftheadinglevelby: -1
-      - name: Commit help file
-        uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v7
         with:
-          commit_message: "docs: update help file"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "docs: update help file"
+          branch: docs/update-help-file
+          title: "docs: update help file"
