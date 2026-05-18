@@ -6,6 +6,7 @@ on:
     paths:
       - README.md
       - .github/workflows/generate-help-file.yaml
+  workflow_dispatch: {}
 jobs:
   docs:
     runs-on: ubuntu-latest
