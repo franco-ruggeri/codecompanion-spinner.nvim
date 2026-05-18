@@ -15,7 +15,7 @@ function M:new(chat_id, buffer)
 	}
 	self.__index = self
 	setmetatable(object, self)
-	log.debug("Spinner", object.chat_id, "created")
+	log.debug("Spinner " .. object.chat_id .. " created")
 	return object
 end
 
@@ -52,7 +52,7 @@ function M:_start_timer()
 	end)
 	self.timer = vim.uv.new_timer()
 	self.timer:start(0, 100, timer_fn)
-	log.debug("Spinner", self.chat_id, "timer started")
+	log.debug("Spinner " .. self.chat_id .. " timer started")
 end
 
 function M:_stop_timer()
@@ -62,7 +62,7 @@ function M:_stop_timer()
 	self.timer:stop()
 	self.timer:close()
 	self.timer = nil
-	log.debug("Spinner", self.chat_id, "timer stopped")
+	log.debug("Spinner " .. self.chat_id .. " timer stopped")
 end
 
 function M:_update_state()
@@ -88,13 +88,7 @@ function M:_update_state()
 		self:_stop_timer()
 	end
 
-	log.debug(
-		"Spinner",
-		self.chat_id,
-		"state updated:",
-		"enabled=" .. tostring(self.enabled),
-		"started=" .. tostring(self.started)
-	)
+	log.debug("Spinner " .. self.chat_id .. " state updated: enabled=" .. tostring(self.enabled) .. " started=" .. tostring(self.started))
 end
 
 function M:start()

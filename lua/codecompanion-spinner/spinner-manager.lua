@@ -13,7 +13,7 @@ M.setup = function()
 
 			local chat_id = args.data.id
 			if spinners[chat_id] then
-				log.debug("Spinner", chat_id, "already exists")
+				log.debug("Spinner " .. chat_id .. " already exists")
 				return
 			end
 
@@ -30,7 +30,7 @@ M.setup = function()
 			local chat_id = args.data.id
 			local spinner = spinners[chat_id]
 			if not spinner then
-				log.debug("Spinner", chat_id, "not found")
+				log.debug("Spinner " .. chat_id .. " not found")
 				return
 			end
 			spinner:stop()
@@ -61,7 +61,7 @@ M.setup = function()
 			local chat_id = args.data.id
 			local spinner = spinners[chat_id]
 			if not spinner then
-				log.debug("Spinner", chat_id, "not found")
+				log.debug("Spinner " .. chat_id .. " not found")
 				return
 			end
 			spinner:disable()
@@ -75,7 +75,7 @@ M.setup = function()
 			local chat_id = args.data.id
 			local spinner = spinners[chat_id]
 			if not spinner then
-				log.debug("Spinner", args.data.id, "not found")
+				log.debug("Spinner " .. args.data.id .. " not found")
 				return
 			end
 			spinner:start()
@@ -89,7 +89,7 @@ M.setup = function()
 			local chat_id = args.data.id
 			local spinner = spinners[chat_id]
 			if not spinner then
-				log.debug("Spinner", chat_id, "not found")
+				log.debug("Spinner " .. chat_id .. " not found")
 				return
 			end
 			spinner:stop()
