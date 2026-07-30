@@ -5,11 +5,12 @@ M.log = require("codecompanion-spinner.log")
 
 M.opts = {
 	log_level = vim.log.levels.INFO,
+	text = "Processing...",
 }
 
 function M.setup(opts)
 	M.opts = vim.tbl_deep_extend("force", M.opts, opts or {})
-	M.spinner_manager.setup()
+	M.spinner_manager.setup(M.opts.text)
 	M.log.setup(M.opts.log_level)
 end
 

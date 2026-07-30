@@ -17,7 +17,7 @@ Note the *"Processing..."* virtual text while AI is generating the response.
 - 🌀 Animated spinner in CodeCompanion chat during AI processing.
 - 🗂️ Supports multiple chats with concurrent active requests (each gets its
   own spinner).
-- ⚙️ Zero configuration.
+- ⚙️ Configurable processing text.
 
 ## 📦 Installation
 
@@ -51,6 +51,18 @@ require("codecompanion").setup({
 ```
 
 </details>
+
+## ⚙️ Configuration
+
+The following options can be passed to the `spinner` extension (defaults shown):
+
+```lua
+extensions = {
+    spinner = {
+        text = "Processing...",  -- text displayed next to the spinner
+    },
+},
+```
 
 ## 🙏 Acknowledgements
 

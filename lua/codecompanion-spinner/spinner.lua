@@ -2,10 +2,11 @@ local log = require("codecompanion-spinner.log")
 
 local M = {}
 
-function M:new(chat_id, buffer)
+function M:new(chat_id, buffer, text)
 	local object = {
 		chat_id = chat_id,
 		buffer = buffer,
+		text = text,
 		started = false, -- whether there is an active request in the chat
 		enabled = false, -- whether the chat buffer is displaying the chat
 		timer = nil,
@@ -32,7 +33,7 @@ function M:_update_text()
 	vim.api.nvim_buf_set_extmark(self.buffer, self.namespace_id, last_line, 0, {
 		virt_lines = {
 			{ { "" } }, -- empty line for spacing
-			{ { self.spinner_symbols[self.spinner_index] .. " Processing...", "Comment" } },
+			{ { self.spinner_symbols[self.spinner_index] .. " " .. self.text, "Comment" } },
 		},
 	})
 end
