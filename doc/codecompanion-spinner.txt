@@ -1,4 +1,4 @@
-*codecompanion-spinner.txt*      For NVIM v0.8.0      Last change: 2026 May 18
+*codecompanion-spinner.txt*      For NVIM v0.8.0     Last change: 2026 July 30
 
 ==============================================================================
 Table of Contents                    *codecompanion-spinner-table-of-contents*
@@ -6,8 +6,9 @@ Table of Contents                    *codecompanion-spinner-table-of-contents*
 1. Overview                                   |codecompanion-spinner-overview|
 2. Features                                   |codecompanion-spinner-features|
 3. Installation                           |codecompanion-spinner-installation|
-4. Acknowledgements                   |codecompanion-spinner-acknowledgements|
-5. Links                                         |codecompanion-spinner-links|
+4. Configuration                         |codecompanion-spinner-configuration|
+5. Acknowledgements                   |codecompanion-spinner-acknowledgements|
+6. Links                                         |codecompanion-spinner-links|
 
 ==============================================================================
 1. Overview                                   *codecompanion-spinner-overview*
@@ -28,7 +29,7 @@ response.
 - Animated spinner in CodeCompanion chat during AI processing.
 - Supports multiple chats with concurrent active requests (each gets its
     own spinner).
-- Zero configuration.
+- Configurable processing text.
 
 
 ==============================================================================
@@ -64,14 +65,29 @@ Example using lazy.nvim ~
 
 
 ==============================================================================
-4. Acknowledgements                   *codecompanion-spinner-acknowledgements*
+4. Configuration                         *codecompanion-spinner-configuration*
+
+The following options can be passed to the `spinner` extension (defaults
+shown):
+
+>lua
+    extensions = {
+        spinner = {
+            text = "Processing...",  -- text displayed next to the spinner
+        },
+    },
+<
+
+
+==============================================================================
+5. Acknowledgements                   *codecompanion-spinner-acknowledgements*
 
 Thanks yuhua99 <https://github.com/yuhua99> for providing the basic spinner
 logic
 <https://github.com/olimorris/codecompanion.nvim/discussions/640#discussioncomment-12866279>.
 
 ==============================================================================
-5. Links                                         *codecompanion-spinner-links*
+6. Links                                         *codecompanion-spinner-links*
 
 1. *demo-spinner*: https://github.com/user-attachments/assets/66191a4e-8bab-4c37-88f6-f208c9f387ea
 
