@@ -59,7 +59,9 @@ The following options can be passed to the `spinner` extension (defaults shown):
 ```lua
 extensions = {
     spinner = {
-        text = "Processing...",  -- text displayed next to the spinner
+        opts = {
+          text = "Processing...",  -- text displayed next to the spinner
+        },
     },
 },
 ```
