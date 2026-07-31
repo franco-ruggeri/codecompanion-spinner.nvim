@@ -1,4 +1,4 @@
-*codecompanion-spinner.txt*      For NVIM v0.8.0     Last change: 2026 July 30
+*codecompanion-spinner.txt*      For NVIM v0.8.0     Last change: 2026 July 31
 
 ==============================================================================
 Table of Contents                    *codecompanion-spinner-table-of-contents*
@@ -73,7 +73,9 @@ shown):
 >lua
     extensions = {
         spinner = {
-            text = "Processing...",  -- text displayed next to the spinner
+            opts = {
+              text = "Processing...",  -- text displayed next to the spinner
+            },
         },
     },
 <
